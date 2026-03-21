@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: EcommercePlatform
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    username: ECOMMERCE_DB
+    password: Pass123
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show_sql: true
+    properties:
+      format_sql: true
