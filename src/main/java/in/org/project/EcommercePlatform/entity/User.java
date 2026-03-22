@@ -1,34 +1,30 @@
 package in.org.project.EcommercePlatform.entity;
 
+import in.org.project.EcommercePlatform.type.RoleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "APP_USER", uniqueConstraints = {@UniqueConstraint(name = "email", columnNames = {"email"})})
+@Table(name = "APP_USER", uniqueConstraints = {@UniqueConstraint(name = "unique_userName", columnNames = {"userName"})})
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@Builder
+public class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
-
-    @Email
-    private String email;
 
     @Column(nullable = false)
     private String userName;
@@ -38,18 +34,23 @@ public class User {
 
     private Long age;
 
-    //private List<String>roles;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<RoleType>roles=new ArrayList<>();
 
     @OneToMany(mappedBy = "user",orphanRemoval = true,cascade = CascadeType.ALL)
     private Set<Address> listOfAddress=new HashSet<>();
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return List.of();
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return this.userName;
-//    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<SimpleGrantedAuthority>authorities=new HashSet<>();
+        return roles.stream()
+                .map(roleType -> new SimpleGrantedAuthority(roleType.toString()))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public String getUsername() {
+        return this.userName;
+    }
 }
