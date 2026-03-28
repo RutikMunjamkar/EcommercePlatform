@@ -1,10 +1,6 @@
 package in.org.project.EcommercePlatform.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,7 +13,9 @@ public class CustomException extends RuntimeException{
     public CustomException(){
         this.localDateTime=LocalDateTime.now();
     }
+
     public CustomException(String message, int httpCode){
+        this();
         this.message=message;
         this.httpCode=httpCode;
     }

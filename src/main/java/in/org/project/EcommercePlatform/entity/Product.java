@@ -1,18 +1,25 @@
 package in.org.project.EcommercePlatform.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
 @Entity
-@Table(name = "PRODUCT")
-public class Product {
+@Table(name = "PRODUCT",uniqueConstraints = {@UniqueConstraint(name = "unique_product_user_merchatn",columnNames = {"productName","merchant_id"})})
+public class  Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String productName;
 
     @Column(nullable = false)
@@ -25,6 +32,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name="merchant_id")
+    @JsonBackReference
     private Merchant merchant;
 
     @OneToMany(mappedBy = "product",orphanRemoval = true, cascade = CascadeType.ALL)

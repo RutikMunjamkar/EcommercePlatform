@@ -7,7 +7,9 @@ import in.org.project.EcommercePlatform.dto.SignUpRequestDto;
 import in.org.project.EcommercePlatform.dto.SignUpResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -26,8 +28,14 @@ public class AuthController {
         return ResponseEntity.ok(authService.loginUser(loginRequestDto));
     }
 
-    @PostMapping("updatePassword/{newPassWord}")
-    public ResponseEntity<LoginResponseDto> updatePassword(@PathVariable("newPassWord") String newPassWord){
-        return ResponseEntity.ok(authService.updatePassWord(newPassWord));
+    @PostMapping("/updatePassword")
+    public ResponseEntity<LoginResponseDto> updatePassword(@RequestBody Map<String,Object>requestMap){
+        return ResponseEntity.ok(authService.updatePassWord(requestMap));
+    }
+
+    @GetMapping("/allusers/{role}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Object> getAllRoles(@PathVariable String role){
+        return ResponseEntity.ok(authService.getAllUsers(role));
     }
 }

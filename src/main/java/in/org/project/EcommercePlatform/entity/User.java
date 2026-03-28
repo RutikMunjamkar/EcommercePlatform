@@ -2,14 +2,11 @@ package in.org.project.EcommercePlatform.entity;
 
 import in.org.project.EcommercePlatform.type.RoleType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "APP_USER", uniqueConstraints = {@UniqueConstraint(name = "unique_userName", columnNames = {"userName"})})
@@ -43,10 +40,9 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority>authorities=new HashSet<>();
         return roles.stream()
-                .map(roleType -> new SimpleGrantedAuthority(roleType.toString()))
-                .collect(Collectors.toSet());
+                .map(roleType -> new SimpleGrantedAuthority("ROLE_"+roleType.toString()))
+                .toList();
     }
 
     @Override
