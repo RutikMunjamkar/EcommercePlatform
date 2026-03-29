@@ -11,7 +11,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
 @Entity
 @Table(name = "PRODUCT",uniqueConstraints = {@UniqueConstraint(name = "unique_product_user_merchatn",columnNames = {"productName","merchant_id"})})
 public class  Product {

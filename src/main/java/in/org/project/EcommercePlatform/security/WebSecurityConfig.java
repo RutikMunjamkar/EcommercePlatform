@@ -30,6 +30,7 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionConfig->sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/login").hasAnyRole(RoleType.ADMIN.toString(),RoleType.CUSTOMER.toString(),RoleType.MERCHANT.toString())
+                        .requestMatchers("/customer/**").hasRole(RoleType.CUSTOMER.toString())
                         .anyRequest().permitAll())
                 .addFilterAfter(jwtAuthFilter, ExceptionTranslationFilter.class)
                 .exceptionHandling(exceptionHandling-> exceptionHandling.accessDeniedHandler(((request, response, accessDeniedException) ->

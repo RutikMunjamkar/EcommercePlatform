@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,Object>> handleAccessDeniedException(AccessDeniedException accessDeniedException){
         Map<String,Object>response=new HashMap<>();
         response.put("httpStatusCode",HttpStatus.FORBIDDEN.value());
-        response.put("message",accessDeniedException.getMessage());
+        response.put("message",accessDeniedException.getLocalizedMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }

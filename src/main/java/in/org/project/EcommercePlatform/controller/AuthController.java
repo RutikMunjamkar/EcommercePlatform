@@ -38,4 +38,7 @@ public class AuthController {
     public ResponseEntity<Object> getAllRoles(@PathVariable String role){
         return ResponseEntity.ok(authService.getAllUsers(role));
     }
+
+    //delete user only access given to admin
+
 }
