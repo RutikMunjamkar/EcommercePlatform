@@ -27,4 +27,10 @@ public class CustomerController {
     public ResponseEntity<OrderResponseDto> placeOrder(@RequestParam("customerId") Long customerId, @RequestBody @Valid OrderRequest orderRequest){
         return ResponseEntity.ok(customerService.createOrder(customerId,orderRequest));
     }
+
+    @PostMapping("/cancelOrder")
+    @PreAuthorize("#customerId==authentication.principal.id")
+    public ResponseEntity<String> cancelOrder(@RequestParam("orderId") Long orderId, @RequestParam("customerId") Long customerId){
+        return ResponseEntity.ok(customerService.cancelOrder(orderId,customerId));
+    }
 }

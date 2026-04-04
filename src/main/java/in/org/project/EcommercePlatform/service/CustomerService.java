@@ -41,6 +41,9 @@ public class CustomerService {
     @Autowired
     OrderItemRepository orderItemRepository;
 
+    @Autowired
+    KafkaProducerService kafkaProducerService;
+
 
     @Transactional
     public OrderResponseDto createOrder(Long customerId, OrderRequest orderRequest){
@@ -54,6 +57,8 @@ public class CustomerService {
         Double totalPrice=0.0;
         Map<Long,Double>orderItemPriceMap=new HashMap<>();
         OrderResponseDto orderResponseDto=new OrderResponseDto();orderResponseDto.setOrderId(order.getId());
+        orderResponseDto.setPaymentType(orderRequest.getPaymentMethod().toString());
+        //address to be added
         for(OrderItemDto orderItemDto:orderRequest.getProducts()){
             Product product=productRepository.findById(orderItemDto.getProductId()).orElse(null);
             if(product==null){
@@ -62,6 +67,7 @@ public class CustomerService {
             if (product.getStock()<orderItemDto.getQuantity()){
                 throw new CustomException(String.format("Insufficient stock for product %s. only Available %s",product.getId(),product.getStock()),400);
             }
+            product.setStock(product.getStock()-orderItemDto.getQuantity());
             Double orderItemPrice=product.getPrice()*orderItemDto.getQuantity();
             totalPrice+=orderItemPrice;
             OrderItem orderItem=OrderItem.builder().quantityOrdered(orderItemDto.getQuantity()).orderItemStatus(OrderItemStatus.PENDING)
@@ -75,6 +81,25 @@ public class CustomerService {
         orderResponseDto.setTotalPrice(totalPrice);
         orderResponseDto.setOrderItemPriceList(orderItemPriceMap);
         orderRepository.save(order);
+        kafkaProducerService.produceOrderMessage(objectMapper.writeValueAsString(orderResponseDto));
         return orderResponseDto;
+    }
+
+    @Transactional
+    public String cancelOrder(Long orderId, Long customerId){
+        Customer customer=customerRepository.findById(customerId).orElse(null);
+        if(customer==null){
+            throw new CustomException(String.format("No customer %s id found",customerId),400);
+        }
+        Order order=orderRepository.findById(orderId).orElse(null);
+        if(order==null){
+            throw new CustomException(String.format("No order id %s for customer %s found",orderId,customerId),400);
+        }
+        for(OrderItem orderItem:order.getListOfOrderItem()){
+            Product product=productRepository.findById(orderItem.getId()).orElse(null);
+            product.setStock(product.getStock()+orderItem.getQuantityOrdered());
+        }
+        orderRepository.deleteById(order.getId());
+        return "Order SuccessFully Deleted";
     }
 }

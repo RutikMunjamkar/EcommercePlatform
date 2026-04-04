@@ -13,6 +13,9 @@ spring:
     properties:
       format_sql: true
 
+  topics:
+    order-topic: ordertopayment
+
 server:
   servlet:
     context-path: /ecommerce
