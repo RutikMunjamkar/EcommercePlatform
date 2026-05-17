@@ -1,9 +1,3 @@
-If you want, I can also make 1–2 alternative versions that are punchy for GitHub.
-
-add readme section for this 
-
-Sure! Here’s a ready-to-use README section for your E-commerce Service repository. I’ve kept it clean, professional, and informative. You can copy-paste it into your README.md file.
-
 E-commerce Service (Backend)
 Overview
 
